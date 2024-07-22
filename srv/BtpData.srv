@@ -1,0 +1,20 @@
+uint8 btp_type
+uint16 source_port
+uint16 destination_port
+uint16 destination_port_info
+
+uint8 transport_type
+GeoNetDestination destination
+uint32 its_aid
+uint8 hop_limit
+TrafficClass traffic_class
+
+builtin_interfaces/Duration lifetime
+builtin_interfaces/Duration repetition_interval
+builtin_interfaces/Duration repetition_duration
+
+uint8[1] data
+
+---
+
+uint8 confirm
