@@ -12,11 +12,12 @@ find_package(ros_etsi_its_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 
 set(VANETZA_INSTALL ON)
-set(VANETZA_EXPORT_PACKAGE OFF)
-add_subdirectory(extern/vanetza)
+set(VANETZA_EXPORT_PACKAGE ON)
+set(CMAKE_PREFIX_PATH "extern/vanetza/build")
+find_package(Vanetza REQUIRED)
+#add_subdirectory(extern/vanetza)
 mark_as_advanced(BUILD_BENCHMARK BUILD_CERTIFY BUILD_SOCKTAP BUILD_TESTS BUILD_USING_CONAN)
 mark_as_advanced(VANETZA_ASN1_WITH_ASN1C VANETZA_EXPORT_PACKAGE VANETZA_NET_WITH_POSIX)
-
 
 # Define custom messages
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -45,6 +46,7 @@ target_include_directories(${PROJECT_NAME}_node
     include
     ${v2x_stack_INCLUDE_DIRS}
     ${ros_etsi_its_msgs_INCLUDE_DIRS}
+    extern/vanetza/
 )
 
 # Link against dependencies
