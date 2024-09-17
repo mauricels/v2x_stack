@@ -58,6 +58,7 @@ void CaRxNode::publish(const vanetza::asn1::Cam asn1)
         pub_cam_->publish(*msg);
     } else {
             RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "CAM not correct");
+            RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Error cause: %s", error_msg.c_str());
     }
 }
 

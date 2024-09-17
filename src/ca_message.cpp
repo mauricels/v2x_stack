@@ -44,6 +44,7 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
     msg->reference_position.position_confidence.semi_major_orientation = refpos.positionConfidenceEllipse.semiMajorOrientation;
 
     // high frequency container
+    // TODO: implement parsing for rsuContainerHighFrequency
     if (params.highFrequencyContainer.present == HighFrequencyContainer_PR_basicVehicleContainerHighFrequency)
     {
         const auto& hfc = params.highFrequencyContainer.choice.basicVehicleContainerHighFrequency;
@@ -66,7 +67,8 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
     else
     {
         if (error_msg) *error_msg = "missing BasicVehicleContainerHighFrequency container";
-        return nullptr;
+        // return nullptr;
+        // nullpointer on return commented to avoid non-functional node due to unexpected HF container
     }
 
     if (params.lowFrequencyContainer && params.lowFrequencyContainer->present == LowFrequencyContainer_PR_basicVehicleContainerLowFrequency)
