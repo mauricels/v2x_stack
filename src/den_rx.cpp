@@ -1,6 +1,7 @@
 #include "den_message.h"
 #include "den_rx.h"
 #include <vanetza/btp/ports.hpp>
+#include <chrono>
 
 namespace v2x_stack_btp
 {
@@ -15,6 +16,12 @@ void DenRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Indication DEN");
     if (indication->btp_type == msg::BtpDataIndication::BTP_TYPE_B && indication->destination_port == 2002)
     {
+
+        auto current_time = this->get_clock()->now();
+        auto time_since_last_publish = current_time.seconds() - last_publish_time_.seconds();
+
+        get_parameter("cooldown", publish_cooldown_);
+
         /*
         vanetza::asn1::Denm denm;
         if (denm.decode(indication->data))
@@ -32,7 +39,12 @@ void DenRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
         if (ok)
         {
             RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Well decoded DEN");
-            publish(denm);
+            if(time_since_last_publish >= publish_cooldown_)
+            {
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Time interval OK - publishing DEN");
+                publish(denm);
+                last_publish_time_ = current_time;
+            }
         }
         else
         {
@@ -72,6 +84,7 @@ int main(int argc, char **argv)
 
    auto node = std::make_shared<v2x_stack_btp::DenRxNode>(rclcpp::NodeOptions());
    auto subscription = node->create_subscription<v2x_stack_btp::msg::BtpDataIndication>("btp_data", 20, std::bind(&v2x_stack_btp::DenRxNode::onIndication, node, std::placeholders::_1));
+   node->declare_parameter("cooldown", 10.0);
 
    rclcpp::spin(node);
    rclcpp::shutdown();

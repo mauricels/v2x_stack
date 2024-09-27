@@ -24,6 +24,8 @@ private:
     //rclcpp::Publisher<ros_etsi_its_msgs::msg::DENM>pub_denm_;
     std::shared_ptr<rclcpp::Publisher<ros_etsi_its_msgs::msg::DENM>> pub_denm_;
     rclcpp::Node::SharedPtr node_;
+    rclcpp::Time last_publish_time_;
+    double publish_cooldown_;
 };
 
 } // namespace v2x_stack_btp
