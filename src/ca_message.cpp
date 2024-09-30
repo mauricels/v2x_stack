@@ -64,12 +64,12 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
         msg->high_frequency_container.yaw_rate.value = hfc.yawRate.yawRateValue;
         msg->high_frequency_container.yaw_rate.confidence = hfc.yawRate.yawRateConfidence;
     }
-    else
-    {
-        if (error_msg) *error_msg = "missing BasicVehicleContainerHighFrequency container";
+    //else
+    //{
+        //if (error_msg) *error_msg = "missing BasicVehicleContainerHighFrequency container";
         // return nullptr;
         // nullpointer on return commented to avoid non-functional node due to unexpected HF container
-    }
+    //}
 
     if (params.lowFrequencyContainer && params.lowFrequencyContainer->present == LowFrequencyContainer_PR_basicVehicleContainerLowFrequency)
     {
