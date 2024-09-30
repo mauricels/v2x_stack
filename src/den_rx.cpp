@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
    auto node = std::make_shared<v2x_stack_btp::DenRxNode>(rclcpp::NodeOptions());
    auto subscription = node->create_subscription<v2x_stack_btp::msg::BtpDataIndication>("btp_data", 20, std::bind(&v2x_stack_btp::DenRxNode::onIndication, node, std::placeholders::_1));
-   node->declare_parameter("cooldown", 10.0);
+   node->declare_parameter("cooldown", 0.0); // No cooldown by default
 
    rclcpp::spin(node);
    rclcpp::shutdown();
