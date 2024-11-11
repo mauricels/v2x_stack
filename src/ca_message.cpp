@@ -20,7 +20,7 @@ inline uint8_t reverse_byte(uint8_t byte)
 
 } // namespace
 
-boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::Cam& asn1, std::string* error_msg)
+boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::r1::Cam& asn1, std::string* error_msg)
 {
     auto msg = boost::make_shared<ros_etsi_its_msgs::msg::CAM>();
     //ros_etsi_its_msgs::msg::CAM msg;
@@ -106,9 +106,9 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
     return msg;
 }
 
-vanetza::asn1::Cam convertCam(ros_etsi_its_msgs::msg::CAM::ConstSharedPtr ptr)
+vanetza::asn1::r1::Cam convertCam(ros_etsi_its_msgs::msg::CAM::ConstSharedPtr ptr)
 {
-    vanetza::asn1::Cam msg;
+    vanetza::asn1::r1::Cam msg;
 
     ItsPduHeader_t& header = msg->header;
     header.protocolVersion = ptr->its_header.protocol_version;

@@ -23,13 +23,13 @@ void DenRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
         get_parameter("cooldown", publish_cooldown_);
 
         /*
-        vanetza::asn1::Denm denm;
+        vanetza::asn1::r1::Denm denm;
         if (denm.decode(indication->data))
         {
             RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Well decoded DEN");
             publish(denm);
         }*/
-        vanetza::asn1::Denm denm;// = nullptr;
+        vanetza::asn1::r1::Denm denm;// = nullptr;
         const std::vector<unsigned char>& payload = indication->data;
         const uint8_t* buffer = payload.data();
 
@@ -53,7 +53,7 @@ void DenRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
     }
 }
 
-void DenRxNode::publish(const vanetza::asn1::Denm asn1)
+void DenRxNode::publish(const vanetza::asn1::r1::Denm asn1)
 {
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Entering publish method");
     std::string error_msg;

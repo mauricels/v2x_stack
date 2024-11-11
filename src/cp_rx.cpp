@@ -16,14 +16,14 @@ void CpRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
     if (indication->btp_type == msg::BtpDataIndication::BTP_TYPE_B && indication->destination_port == 2009)
     {
         /*
-        vanetza::asn1::Cpm cpm;
+        vanetza::asn1::r1::Cpm cpm;
         if (cpm.decode(indication->data))
         {
             RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Well decoded CP");
             publish(cpm);
         }*/
 
-        vanetza::asn1::Cpm cpm;// = nullptr;
+        vanetza::asn1::r1::Cpm cpm;// = nullptr;
         const std::vector<unsigned char>& payload = indication->data;
         const uint8_t* buffer = payload.data();
 
@@ -42,7 +42,7 @@ void CpRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
     }
 }
 
-void CpRxNode::publish(const vanetza::asn1::Cpm& asn1)
+void CpRxNode::publish(const vanetza::asn1::r1::Cpm& asn1)
 {
     std::string error_msg;
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Convert CPM");

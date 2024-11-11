@@ -49,6 +49,9 @@ target_include_directories(${PROJECT_NAME}_node
     extern/vanetza/
 )
 
+# Link against Vanetza libraries
+target_link_libraries(${PROJECT_NAME}_node Vanetza::asn1)
+
 # Link against dependencies
 ament_target_dependencies(${PROJECT_NAME}_node
     rclcpp

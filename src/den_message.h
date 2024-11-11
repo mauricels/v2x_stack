@@ -5,7 +5,7 @@
 #include <string>
 
 // forward declaration
-namespace vanetza { namespace asn1 { class Denm; } }
+namespace vanetza { namespace asn1 { namespace r1 {class Denm;} } }
 
 namespace v2x_stack_btp
 {
@@ -16,13 +16,13 @@ namespace v2x_stack_btp
  * \param msg optional error string
  * \return converted DENM (or nullptr on error)
  */
-boost::shared_ptr<ros_etsi_its_msgs::msg::DENM> convertDenm(const vanetza::asn1::Denm& denm, std::string* msg = nullptr);
+boost::shared_ptr<ros_etsi_its_msgs::msg::DENM> convertDenm(const vanetza::asn1::r1::Denm& denm, std::string* msg = nullptr);
 
 /**
  * Convert ROS etsi_its_msg DENM to ASN.1 data structure
  * \param ptr etsi_its_msgs DENM
  * \return converted DENM
  */
-//vanetza::asn1::Denm convertDenm(ros_etsi_its_msgs::msg::DENM::ConstSharedPtr ptr);
+//vanetza::asn1::r1::Denm convertDenm(ros_etsi_its_msgs::msg::DENM::ConstSharedPtr ptr);
 
 } // namespace v2x_stack_btp

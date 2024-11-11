@@ -5,7 +5,7 @@
 #include <string>
 
 // forward declaration
-namespace vanetza { namespace asn1 { class Cpm; } }
+namespace vanetza { namespace asn1 { namespace r1 {class Cpm;} } }
 
 namespace v2x_stack_btp
 {
@@ -16,7 +16,7 @@ namespace v2x_stack_btp
  * \param msg optional error string
  * \return converted CPM (or nullptr on error)
  */
-boost::shared_ptr<ros_etsi_its_msgs::msg::CPM> convertCpm(const vanetza::asn1::Cpm& cpm, std::string* msg = nullptr);
+boost::shared_ptr<ros_etsi_its_msgs::msg::CPM> convertCpm(const vanetza::asn1::r1::Cpm& cpm, std::string* msg = nullptr);
 
 /**
  * Convert ROS etsi_its_msg CPM to ASN.1 data structure

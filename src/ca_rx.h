@@ -17,7 +17,7 @@ public:
 
 private:
     
-    void publish(const vanetza::asn1::Cam);
+    void publish(const vanetza::asn1::r1::Cam);
 
     uint16_t port_;
     rclcpp::Subscription<msg::BtpDataIndication>::SharedPtr sub_btp_;
