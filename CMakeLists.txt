@@ -9,13 +9,13 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(v2x_stack REQUIRED)
 find_package(ros_etsi_its_msgs REQUIRED)
+find_package(etsi_its_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 
 set(VANETZA_INSTALL ON)
-set(VANETZA_EXPORT_PACKAGE ON)
-set(CMAKE_PREFIX_PATH "extern/vanetza/build")
-find_package(Vanetza REQUIRED)
-#add_subdirectory(extern/vanetza)
+set(VANETZA_EXPORT_PACKAGE OFF)
+set(BUILD_SHARED_LIBS ON)
+add_subdirectory(extern/vanetza)
 mark_as_advanced(BUILD_BENCHMARK BUILD_CERTIFY BUILD_SOCKTAP BUILD_TESTS BUILD_USING_CONAN)
 mark_as_advanced(VANETZA_ASN1_WITH_ASN1C VANETZA_EXPORT_PACKAGE VANETZA_NET_WITH_POSIX)
 
@@ -46,11 +46,10 @@ target_include_directories(${PROJECT_NAME}_node
     include
     ${v2x_stack_INCLUDE_DIRS}
     ${ros_etsi_its_msgs_INCLUDE_DIRS}
-    extern/vanetza/
 )
 
 # Link against Vanetza libraries
-target_link_libraries(${PROJECT_NAME}_node Vanetza::asn1)
+target_link_libraries(${PROJECT_NAME}_node Vanetza::vanetza)
 
 # Link against dependencies
 ament_target_dependencies(${PROJECT_NAME}_node
@@ -173,6 +172,42 @@ target_link_libraries(${PROJECT_NAME}_den_node Vanetza::asn1 Vanetza::facilities
 
 # Install targets
 install(TARGETS ${PROJECT_NAME}_den_node
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+##CPM_TS
+# Add executable
+add_executable(${PROJECT_NAME}_cp_ts_node
+    src/cp_ts_message.cpp
+    src/cp_ts_rx.cpp
+)
+
+# Include directories for the executable
+target_include_directories(${PROJECT_NAME}_cp_ts_node
+    PUBLIC
+    include
+    ${v2x_stack_INCLUDE_DIRS}
+    ${ros_etsi_its_msgs_INCLUDE_DIRS}
+    extern/vanetza/asn1/its/r2
+)
+
+# Link against dependencies
+ament_target_dependencies(${PROJECT_NAME}_cp_ts_node
+    rclcpp
+    rclcpp_components
+    std_msgs
+    v2x_stack
+    etsi_its_msgs
+)
+
+# Link against generated messages
+rosidl_target_interfaces(${PROJECT_NAME}_cp_ts_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+# Link against Vanetza libraries
+target_link_libraries(${PROJECT_NAME}_cp_ts_node Vanetza::vanetza)
+
+# Install targets
+install(TARGETS ${PROJECT_NAME}_cp_ts_node
     DESTINATION lib/${PROJECT_NAME}
 )
 
