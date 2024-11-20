@@ -83,6 +83,51 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
             // Perceived Object
             case 5:
                 
+                wrapped_cont.container_data.perceived_object_container.number_of_perceived_objects.value = asn1_wrapped_cont->containerData.choice.PerceivedObjectContainer.numberOfPerceivedObjects;
+
+                for(int j = 0; j < asn1_wrapped_cont->containerData.choice.PerceivedObjectContainer.perceivedObjects.list.count; j++)
+                {  
+                    const Vanetza_ITS2_PerceivedObject_t* asn1_perceived_object = asn1_wrapped_cont->containerData.choice.PerceivedObjectContainer.perceivedObjects.list.array[j];
+                    etsi_its_cpm_ts_msgs::msg::PerceivedObject perceived_object;
+
+                    if(asn1_perceived_object->objectId)
+                    {
+                        perceived_object.object_id_is_present = true;
+                        perceived_object.object_id.value = static_cast<short unsigned int>(*asn1_perceived_object->objectId);
+                    }
+
+                    perceived_object.measurement_delta_time.value = asn1_perceived_object->measurementDeltaTime;
+                    perceived_object.position.x_coordinate.value.value = asn1_perceived_object->position.xCoordinate.value;
+                    perceived_object.position.x_coordinate.confidence.value = asn1_perceived_object->position.xCoordinate.confidence;
+
+                    perceived_object.position.y_coordinate.value.value = asn1_perceived_object->position.yCoordinate.value;
+                    perceived_object.position.y_coordinate.confidence.value = asn1_perceived_object->position.yCoordinate.confidence;
+
+                    if(asn1_perceived_object->position.zCoordinate){
+                        perceived_object.position.z_coordinate_is_present = true;
+                        perceived_object.position.z_coordinate.value.value = asn1_perceived_object->position.zCoordinate->value;
+                        perceived_object.position.z_coordinate.confidence.value = asn1_perceived_object->position.zCoordinate->confidence;
+                    }
+
+                    // TODO: optionals
+                    //
+                    // velocity                                          Velocity3dWithConfidence OPTIONAL,
+                    // acceleration                                      Acceleration3dWithConfidence OPTIONAL,
+                    // angles                                            EulerAnglesWithConfidence OPTIONAL,
+                    // zAngularVelocity                                  CartesianAngularVelocityComponent OPTIONAL,
+                    // lowerTriangularCorrelationMatrices                LowerTriangularPositiveSemidefiniteMatrices OPTIONAL,
+                    // objectDimensionZ                                  ObjectDimension OPTIONAL,
+                    // objectDimensionY                                  ObjectDimension OPTIONAL,
+                    // objectDimensionX                                  ObjectDimension OPTIONAL,
+                    // objectAge                                         DeltaTimeMilliSecondSigned (0..2047) OPTIONAL,
+                    // objectPerceptionQuality                           ObjectPerceptionQuality OPTIONAL,
+                    // sensorIdList                                      SequenceOfIdentifier1B OPTIONAL,
+                    // classification                                    ObjectClassDescription OPTIONAL,
+                    // mapPosition                                       MapPosition OPTIONAL,
+
+                    wrapped_cont.container_data.perceived_object_container.perceived_objects.array.push_back(perceived_object);
+                }
+
                 break;
             
             default:
