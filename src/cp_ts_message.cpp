@@ -107,7 +107,7 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
                 for(int j = 0; j < asn1_wrapped_cont->containerData.choice.SensorInformationContainer.list.count; j++)
                 {
                     const Vanetza_ITS2_SensorInformation_t* asn1_sensor_info = asn1_wrapped_cont->containerData.choice.SensorInformationContainer.list.array[j];
-                    etsi_its_cpm_ts_msgs::msg::SensorInformation_t sensor_info;
+                    etsi_its_cpm_ts_msgs::msg::SensorInformation sensor_info;
                     
                     sensor_info.sensor_id.value = asn1_sensor_info->sensorId;
                     sensor_info.sensor_type.value = asn1_sensor_info->sensorType;
