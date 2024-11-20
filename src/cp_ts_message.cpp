@@ -61,7 +61,7 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
                 // trailerDataSet     TrailerDataSet OPTIONAL,
 
                 break;
-
+            
             // Originating RSU
             case 2:
                 
@@ -103,8 +103,24 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
             
             // Sensor Information 
             case 3:
+            
+                for(int j = 0; j < asn1_wrapped_cont->containerData.choice.SensorInformationContainer.list.count; j++)
+                {
+                    const Vanetza_ITS2_SensorInformation_t* asn1_sensor_info = asn1_wrapped_cont->containerData.choice.SensorInformationContainer.list.array[j];
+                    etsi_its_cpm_ts_msgs::msg::SensorInformation_t sensor_info;
+                    
+                    sensor_info.sensor_id.value = asn1_sensor_info->sensorId;
+                    sensor_info.sensor_type.value = asn1_sensor_info->sensorType;
+                    sensor_info.shadowing_applies = asn1_sensor_info->shadowingApplies;
 
-                //wrapped_cont.container_data.sensor_information_container
+                    // TODO: optionals
+                    //
+                    // perceptionRegionShape		Shape OPTIONAL,
+                    // perceptionRegionConfidence  ConfidenceLevel OPTIONAL,
+                    
+                    wrapped_cont.container_data.sensor_information_container.array.push_back(sensor_info);
+                }  
+
                 break;
 
             // Perception Region
