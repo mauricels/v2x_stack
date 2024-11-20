@@ -103,7 +103,7 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
             
             // Sensor Information 
             case 3:
-            
+
                 for(int j = 0; j < asn1_wrapped_cont->containerData.choice.SensorInformationContainer.list.count; j++)
                 {
                     const Vanetza_ITS2_SensorInformation_t* asn1_sensor_info = asn1_wrapped_cont->containerData.choice.SensorInformationContainer.list.array[j];
@@ -125,8 +125,103 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
 
             // Perception Region
             case 4:
+
+                for(int j = 0; j < asn1_wrapped_cont->containerData.choice.PerceptionRegionContainer.list.count; j++)
+                {
+                    const Vanetza_ITS2_PerceptionRegion_t* asn1_perception_region = asn1_wrapped_cont->containerData.choice.PerceptionRegionContainer.list.array[j];
+                    etsi_its_cpm_ts_msgs::msg::PerceptionRegion perception_region;
+
+                    perception_region.measurement_delta_time.value = asn1_perception_region->measurementDeltaTime;
+                    perception_region.perception_region_confidence.value = asn1_perception_region->perceptionRegionConfidence;
+
+                    if(asn1_perception_region->perceptionRegionShape.present){
+
+                        switch (asn1_perception_region->perceptionRegionShape.present)
+                        {
+                        case Vanetza_ITS2_Shape_PR_NOTHING:
+                            break;
+
+                        case Vanetza_ITS2_Shape_PR_rectangular:
+                            perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_rectangular;
+                            perception_region.perception_region_shape.rectangular.semi_length.value = asn1_perception_region->perceptionRegionShape.choice.rectangular.semiLength;
+                            perception_region.perception_region_shape.rectangular.semi_breadth.value = asn1_perception_region->perceptionRegionShape.choice.rectangular.semiBreadth;
+
+                            // TODO: optionals
+                            //
+                            // centerPoint    CartesianPosition3d OPTIONAL,
+                            // orientation    Wgs84AngleValue OPTIONAL,
+                            // height         StandardLength12b OPTIONAL
+
+                            break;
+
+                        case Vanetza_ITS2_Shape_PR_circular:
+                            perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_circular;
+                            perception_region.perception_region_shape.circular.radius.value = asn1_perception_region->perceptionRegionShape.choice.circular.radius;
+
+                            // TODO: optionals
+                            //
+                            // shapeReferencePoint    CartesianPosition3d OPTIONAL,
+                            // height                 StandardLength12b OPTIONAL
+
+                            break;
+
+                        case Vanetza_ITS2_Shape_PR_polygonal:
+                            perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_polygonal;
+
+                            for(int k = 0; k <  asn1_perception_region->perceptionRegionShape.choice.polygonal.polygon.list.count; k++)
+                            {
+                                const Vanetza_ITS2_CartesianPosition3d_t* asn1_cartesian_pos3D = asn1_perception_region->perceptionRegionShape.choice.polygonal.polygon.list.array[k];
+                                etsi_its_cpm_ts_msgs::msg::CartesianPosition3d cartesian_pos3D;
+
+                                cartesian_pos3D.x_coordinate.value = asn1_cartesian_pos3D->xCoordinate;
+                                cartesian_pos3D.y_coordinate.value = asn1_cartesian_pos3D->yCoordinate;
+
+                                if(asn1_cartesian_pos3D->zCoordinate)
+                                {
+                                    cartesian_pos3D.z_coordinate_is_present = true;
+                                    cartesian_pos3D.z_coordinate.value = static_cast<short int>(*asn1_cartesian_pos3D->zCoordinate);
+                                }
+
+                                // add pushback here
+                                perception_region.perception_region_shape.polygonal.polygon.array.push_back(cartesian_pos3D);
+
+                            }
+
+                            // TODO: optionals
+                            //
+                            // shapeReferencePoint    CartesianPosition3d OPTIONAL,
+                            // height                 StandardLength12b OPTIONAL
+
+                            break;
+
+                        case Vanetza_ITS2_Shape_PR_elliptical:
+                            perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_elliptical;
+                            break;
+
+                        case Vanetza_ITS2_Shape_PR_radial:
+                            perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_radial;
+                            break;
+
+                        case Vanetza_ITS2_Shape_PR_radialShapes:
+                            perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_radialShapes;
+                            break;
+                        
+                        default:
+                            break;
+                        }
+                    }
+
+                    perception_region.shadowing_applies = asn1_perception_region->shadowingApplies;
+
+                    // TODO: optionals
+                    //
+                    // sensorIdList                 SequenceOfIdentifier1B OPTIONAL,
+                    // numberOfPerceivedObjects     CardinalNumber1B OPTIONAL,
+                    // perceivedObjectIds           PerceivedObjectIds OPTIONAL,
+
+                    wrapped_cont.container_data.perception_region_container.array.push_back(perception_region);
+                }
                 
-                //wrapped_cont.container_data.perception_region_container
                 break;
 
             // Perceived Object
