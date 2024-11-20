@@ -51,6 +51,15 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
             // Originating Vehicle
             case 1:
                 
+                wrapped_cont.container_data.originating_vehicle_container.orientation_angle.value.value = asn1_wrapped_cont->containerData.choice.OriginatingVehicleContainer.orientationAngle.value;
+                wrapped_cont.container_data.originating_vehicle_container.orientation_angle.confidence.value = asn1_wrapped_cont->containerData.choice.OriginatingVehicleContainer.orientationAngle.confidence;
+
+                //TODO: optionals
+                //
+                // pitchAngle         CartesianAngle OPTIONAL,
+                // rollAngle          CartesianAngle OPTIONAL,
+                // trailerDataSet     TrailerDataSet OPTIONAL,
+
                 break;
 
             // Originating RSU
