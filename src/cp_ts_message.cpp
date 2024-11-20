@@ -65,7 +65,40 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
             // Originating RSU
             case 2:
                 
-                //wrapped_cont.container_data.originating_rsu_container
+                if(asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->present){
+                    wrapped_cont.container_data.originating_rsu_container.map_reference_is_present = true;
+                    
+                    switch (asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->present)
+                    {
+                    case Vanetza_ITS2_MapReference_PR_NOTHING:
+                        break;
+
+                    case Vanetza_ITS2_MapReference_PR_roadsegment:
+                        wrapped_cont.container_data.originating_rsu_container.map_reference.choice = Vanetza_ITS2_MapReference_PR_roadsegment;
+                        wrapped_cont.container_data.originating_rsu_container.map_reference.roadsegment.id.value = asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->choice.roadsegment.id;
+
+                        if(asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->choice.roadsegment.region){
+                            wrapped_cont.container_data.originating_rsu_container.map_reference.roadsegment.region_is_present =  true;
+                            wrapped_cont.container_data.originating_rsu_container.map_reference.roadsegment.region.value = static_cast<short unsigned int>(*asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->choice.roadsegment.region);
+                        }
+                        break;
+
+                    case Vanetza_ITS2_MapReference_PR_intersection:
+                        wrapped_cont.container_data.originating_rsu_container.map_reference.choice = Vanetza_ITS2_MapReference_PR_intersection;
+                        wrapped_cont.container_data.originating_rsu_container.map_reference.intersection.id.value = asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->choice.intersection.id;
+
+                        if(asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->choice.intersection.region){
+                            wrapped_cont.container_data.originating_rsu_container.map_reference.intersection.region_is_present =  true;
+                            wrapped_cont.container_data.originating_rsu_container.map_reference.intersection.region.value = static_cast<short unsigned int>(*asn1_wrapped_cont->containerData.choice.OriginatingRsuContainer.mapReference->choice.intersection.region);
+                        }
+
+                        break;
+                    
+                    default:
+                        break;
+                    }
+                }
+                
                 break;
             
             // Sensor Information 
