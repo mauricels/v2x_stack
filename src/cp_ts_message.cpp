@@ -80,7 +80,7 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
                 break;
             }
             
-
+            msg->payload.cpm_containers.value.array.push_back(wrapped_cont);
         }
 
     }
