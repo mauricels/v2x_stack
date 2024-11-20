@@ -44,34 +44,36 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
             const Vanetza_ITS2_WrappedCpmContainer_t* asn1_wrapped_cont = asn1->payload.cpmContainers.list.array[i];
             etsi_its_cpm_ts_msgs::msg::WrappedCpmContainer wrapped_cont;
 
-            //msg->payload.cpm_containers.choice = asn1_wrapped_cont->containerId;
             wrapped_cont.container_id.value = asn1_wrapped_cont->containerId;
 
             switch (asn1_wrapped_cont->containerId)
             {
+            // Originating Vehicle
             case 1:
-                // Originating Vehicle
-                //wrapped_cont.container_data.originating_vehicle_container
+                
                 break;
 
+            // Originating RSU
             case 2:
-                // Originating RSU
+                
                 //wrapped_cont.container_data.originating_rsu_container
                 break;
             
+            // Sensor Information 
             case 3:
-                // Sensor Information 
+
                 //wrapped_cont.container_data.sensor_information_container
                 break;
 
+            // Perception Region
             case 4:
-                // Perception Region
+                
                 //wrapped_cont.container_data.perception_region_container
                 break;
 
+            // Perceived Object
             case 5:
-                // Perceived Object
-                //wrapped_cont.container_data.perceived_object_container
+                
                 break;
             
             default:
