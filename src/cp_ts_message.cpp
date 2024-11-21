@@ -182,7 +182,6 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
                                     cartesian_pos3D.z_coordinate.value = static_cast<short int>(*asn1_cartesian_pos3D->zCoordinate);
                                 }
 
-                                // add pushback here
                                 perception_region.perception_region_shape.polygonal.polygon.array.push_back(cartesian_pos3D);
 
                             }
@@ -196,14 +195,64 @@ boost::shared_ptr<etsi_its_cpm_ts_msgs::msg::CollectivePerceptionMessage> conver
 
                         case Vanetza_ITS2_Shape_PR_elliptical:
                             perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_elliptical;
+
+                            perception_region.perception_region_shape.elliptical.semi_major_axis_length.value = asn1_perception_region->perceptionRegionShape.choice.elliptical.semiMajorAxisLength;
+                            perception_region.perception_region_shape.elliptical.semi_minor_axis_length.value = asn1_perception_region->perceptionRegionShape.choice.elliptical.semiMinorAxisLength;
+
+                            // TODO: optionals
+                            //
+                            // shapeReferencePoint    CartesianPosition3d OPTIONAL,
+                            // orientation            Wgs84AngleValue OPTIONAL,
+                            // height                 StandardLength12b OPTIONAL
+
                             break;
 
                         case Vanetza_ITS2_Shape_PR_radial:
                             perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_radial;
+
+                            perception_region.perception_region_shape.radial.range.value = asn1_perception_region->perceptionRegionShape.choice.radial.range;
+                            perception_region.perception_region_shape.radial.stationary_horizontal_opening_angle_start.value = asn1_perception_region->perceptionRegionShape.choice.radial.horizontalOpeningAngleStart;
+                            perception_region.perception_region_shape.radial.stationary_horizontal_opening_angle_end.value = asn1_perception_region->perceptionRegionShape.choice.radial.horizontalOpeningAngleEnd;
+
+                            // TODO: optionals
+                            //
+                            // shapeReferencePoint                      CartesianPosition3d OPTIONAL,
+                            // verticalOpeningAngleStart                CartesianAngleValue OPTIONAL,
+                            // verticalOpeningAngleEnd                  CartesianAngleValue OPTIONAL
+
+
                             break;
 
                         case Vanetza_ITS2_Shape_PR_radialShapes:
                             perception_region.perception_region_shape.choice = Vanetza_ITS2_Shape_PR_radialShapes;
+
+                            perception_region.perception_region_shape.radial_shapes.ref_point_id.value = asn1_perception_region->perceptionRegionShape.choice.radialShapes.refPointId;
+                            perception_region.perception_region_shape.radial_shapes.x_coordinate.value = asn1_perception_region->perceptionRegionShape.choice.radialShapes.xCoordinate;
+                            perception_region.perception_region_shape.radial_shapes.y_coordinate.value = asn1_perception_region->perceptionRegionShape.choice.radialShapes.yCoordinate;
+
+                            // radialShapesList    RadialShapesList
+                            for(int k = 0; k <  asn1_perception_region->perceptionRegionShape.choice.radialShapes.radialShapesList.list.count; k++)
+                            {
+                                const Vanetza_ITS2_RadialShapeDetails_t* asn1_radial_shape_details = asn1_perception_region->perceptionRegionShape.choice.radialShapes.radialShapesList.list.array[k];
+                                etsi_its_cpm_ts_msgs::msg::RadialShapeDetails radial_shape_details;
+
+                                radial_shape_details.range.value = asn1_radial_shape_details->range;
+                                radial_shape_details.horizontal_opening_angle_start.value = asn1_radial_shape_details->horizontalOpeningAngleStart;
+                                radial_shape_details.horizontal_opening_angle_end.value = asn1_radial_shape_details->horizontalOpeningAngleEnd;
+
+                                // TODO: optionals
+                                //
+                                // verticalOpeningAngleStart      CartesianAngleValue OPTIONAL,
+                                // verticalOpeningAngleEnd        CartesianAngleValue OPTIONAL
+
+                                perception_region.perception_region_shape.radial_shapes.radial_shapes_list.array.push_back(radial_shape_details);
+
+                            }
+
+                            // TODO: optionals
+                            //
+                            // zCoordinate         CartesianCoordinateSmall OPTIONAL,
+                            
                             break;
                         
                         default:
