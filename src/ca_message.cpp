@@ -20,7 +20,7 @@ inline uint8_t reverse_byte(uint8_t byte)
 
 } // namespace
 
-boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::Cam& asn1, std::string* error_msg)
+boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::r1::Cam& asn1, std::string* error_msg)
 {
     auto msg = boost::make_shared<ros_etsi_its_msgs::msg::CAM>();
     //ros_etsi_its_msgs::msg::CAM msg;
@@ -44,6 +44,7 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
     msg->reference_position.position_confidence.semi_major_orientation = refpos.positionConfidenceEllipse.semiMajorOrientation;
 
     // high frequency container
+    // TODO: implement parsing for rsuContainerHighFrequency
     if (params.highFrequencyContainer.present == HighFrequencyContainer_PR_basicVehicleContainerHighFrequency)
     {
         const auto& hfc = params.highFrequencyContainer.choice.basicVehicleContainerHighFrequency;
@@ -63,11 +64,12 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
         msg->high_frequency_container.yaw_rate.value = hfc.yawRate.yawRateValue;
         msg->high_frequency_container.yaw_rate.confidence = hfc.yawRate.yawRateConfidence;
     }
-    else
-    {
-        if (error_msg) *error_msg = "missing BasicVehicleContainerHighFrequency container";
-        return nullptr;
-    }
+    //else
+    //{
+        //if (error_msg) *error_msg = "missing BasicVehicleContainerHighFrequency container";
+        // return nullptr;
+        // nullpointer on return commented to avoid non-functional node due to unexpected HF container
+    //}
 
     if (params.lowFrequencyContainer && params.lowFrequencyContainer->present == LowFrequencyContainer_PR_basicVehicleContainerLowFrequency)
     {
@@ -104,9 +106,9 @@ boost::shared_ptr<ros_etsi_its_msgs::msg::CAM> convertCam(const vanetza::asn1::C
     return msg;
 }
 
-vanetza::asn1::Cam convertCam(ros_etsi_its_msgs::msg::CAM::ConstSharedPtr ptr)
+vanetza::asn1::r1::Cam convertCam(ros_etsi_its_msgs::msg::CAM::ConstSharedPtr ptr)
 {
-    vanetza::asn1::Cam msg;
+    vanetza::asn1::r1::Cam msg;
 
     ItsPduHeader_t& header = msg->header;
     header.protocolVersion = ptr->its_header.protocol_version;

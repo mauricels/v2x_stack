@@ -17,7 +17,7 @@ inline uint8_t reverse_byte(uint8_t byte)
 }
 
 
-boost::shared_ptr<ros_etsi_its_msgs::msg::CPM> convertCpm(const vanetza::asn1::Cpm& asn1, std::string* error_msg)
+boost::shared_ptr<ros_etsi_its_msgs::msg::CPM> convertCpm(const vanetza::asn1::r1::Cpm& asn1, std::string* error_msg)
 {
     auto msg = boost::make_shared<ros_etsi_its_msgs::msg::CPM>();
 

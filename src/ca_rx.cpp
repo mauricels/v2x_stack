@@ -16,13 +16,13 @@ void CaRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
     if (indication->btp_type == msg::BtpDataIndication::BTP_TYPE_B && indication->destination_port == 2001)
     {
         /*
-        vanetza::asn1::Cam cam;
+        vanetza::asn1::r1::Cam cam;
         if (cam.decode(indication->data))
         {
             RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Well decoded CA");
             publish(cam);
         }*/
-        vanetza::asn1::Cam cam;// = nullptr;
+        vanetza::asn1::r1::Cam cam;// = nullptr;
         const std::vector<unsigned char>& payload = indication->data;
         const uint8_t* buffer = payload.data();
 
@@ -41,7 +41,7 @@ void CaRxNode::onIndication(msg::BtpDataIndication::ConstSharedPtr indication)
     }
 }
 
-void CaRxNode::publish(const vanetza::asn1::Cam asn1)
+void CaRxNode::publish(const vanetza::asn1::r1::Cam asn1)
 {
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Entering publish method");
     std::string error_msg;
@@ -58,6 +58,7 @@ void CaRxNode::publish(const vanetza::asn1::Cam asn1)
         pub_cam_->publish(*msg);
     } else {
             RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "CAM not correct");
+            RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Error cause: %s", error_msg.c_str());
     }
 }
 

@@ -9,14 +9,15 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(v2x_stack REQUIRED)
 find_package(ros_etsi_its_msgs REQUIRED)
+find_package(etsi_its_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 
 set(VANETZA_INSTALL ON)
 set(VANETZA_EXPORT_PACKAGE OFF)
+set(BUILD_SHARED_LIBS ON)
 add_subdirectory(extern/vanetza)
 mark_as_advanced(BUILD_BENCHMARK BUILD_CERTIFY BUILD_SOCKTAP BUILD_TESTS BUILD_USING_CONAN)
 mark_as_advanced(VANETZA_ASN1_WITH_ASN1C VANETZA_EXPORT_PACKAGE VANETZA_NET_WITH_POSIX)
-
 
 # Define custom messages
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -47,6 +48,9 @@ target_include_directories(${PROJECT_NAME}_node
     ${ros_etsi_its_msgs_INCLUDE_DIRS}
 )
 
+# Link against Vanetza libraries
+target_link_libraries(${PROJECT_NAME}_node Vanetza::vanetza)
+
 # Link against dependencies
 ament_target_dependencies(${PROJECT_NAME}_node
     rclcpp
@@ -64,6 +68,7 @@ install(TARGETS ${PROJECT_NAME}_node
     DESTINATION lib/${PROJECT_NAME}
 )
 
+##CAM
 # Add executable
 add_executable(${PROJECT_NAME}_ca_node
     src/ca_message.cpp
@@ -134,6 +139,77 @@ install(TARGETS ${PROJECT_NAME}_cp_node
     DESTINATION lib/${PROJECT_NAME}
 )
 
+##DENM
+# Add executable
+add_executable(${PROJECT_NAME}_den_node
+    src/den_message.cpp
+    src/den_rx.cpp
+)
+
+# Include directories for the executable
+target_include_directories(${PROJECT_NAME}_den_node
+    PUBLIC
+    include
+    ${v2x_stack_INCLUDE_DIRS}
+    ${ros_etsi_its_msgs_INCLUDE_DIRS}
+)
+
+# Link against dependencies
+ament_target_dependencies(${PROJECT_NAME}_den_node
+    rclcpp
+    rclcpp_components
+    std_msgs
+    v2x_stack
+    ros_etsi_its_msgs
+)
+
+# Link against generated messages
+rosidl_target_interfaces(${PROJECT_NAME}_den_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+# Link against Vanetza libraries
+target_link_libraries(${PROJECT_NAME}_den_node Vanetza::asn1 Vanetza::facilities)
+
+
+# Install targets
+install(TARGETS ${PROJECT_NAME}_den_node
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+##CPM_TS
+# Add executable
+add_executable(${PROJECT_NAME}_cp_ts_node
+    src/cp_ts_message.cpp
+    src/cp_ts_rx.cpp
+)
+
+# Include directories for the executable
+target_include_directories(${PROJECT_NAME}_cp_ts_node
+    PUBLIC
+    include
+    ${v2x_stack_INCLUDE_DIRS}
+    ${ros_etsi_its_msgs_INCLUDE_DIRS}
+    extern/vanetza/asn1/its/r2
+)
+
+# Link against dependencies
+ament_target_dependencies(${PROJECT_NAME}_cp_ts_node
+    rclcpp
+    rclcpp_components
+    std_msgs
+    v2x_stack
+    etsi_its_msgs
+)
+
+# Link against generated messages
+rosidl_target_interfaces(${PROJECT_NAME}_cp_ts_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+# Link against Vanetza libraries
+target_link_libraries(${PROJECT_NAME}_cp_ts_node Vanetza::vanetza)
+
+# Install targets
+install(TARGETS ${PROJECT_NAME}_cp_ts_node
+    DESTINATION lib/${PROJECT_NAME}
+)
 
 # Install include files
 install(DIRECTORY include/
