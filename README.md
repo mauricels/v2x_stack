@@ -87,7 +87,21 @@ source ~/colcon_ws/install/setup.bash
 
 ## Usage
 
+### Running the BTP Data Service
+To start the BTP data service, run the following command:
+```bash
+ros2 launch v2x_stack services_launch.py
 ```
 
+### Running the V2X Services
+To launch the V2X services, use:
+```bash
+ros2 launch v2x_stack services_launch.py
+```
+
+### Adding New Services
+To add new services to the launch file, modify the configuration file:
+```bash
+/config/services_params.yml
 ```
 
