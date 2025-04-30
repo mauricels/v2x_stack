@@ -89,6 +89,59 @@ void UDPdispatcher::initialize()
  
 }
 
+bool serializeVAM(const asn_TYPE_descriptor_t *td, void *sptr, const std::string &destination_ip, int destination_port)
+{
+    // Serialisierung der ASN.1-Struktur
+    uint8_t buffer[1024]; // Puffer für die serialisierten Daten
+    asn_enc_rval_t er = uper_encode_to_buffer(td, sptr, buffer, sizeof(buffer));
+    if (er.encoded == -1)
+    {
+        throw std::runtime_error("ASN.1 Encoding failed");
+    }
+
+    // UDP-Socket erstellen
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0)
+    {
+        throw std::runtime_error("Failed to create UDP socket");
+    }
+
+    // Zieladresse konfigurieren
+    struct sockaddr_in dest_addr;
+    std::memset(&dest_addr, 0, sizeof(dest_addr));
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(destination_port);
+    if (inet_pton(AF_INET, destination_ip.c_str(), &dest_addr.sin_addr) <= 0)
+    {
+        close(sockfd);
+        throw std::runtime_error("Invalid destination IP address");
+    }
+
+    // Daten über UDP senden
+    ssize_t sent_bytes = sendto(sockfd, buffer, (er.encoded + 7) / 8, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    close(sockfd);
+
+    if (sent_bytes < 0)
+    {
+        throw std::runtime_error("Failed to send UDP packet");
+    }
+
+    return true;
+}
+
+void UDPdispatcher::publishVAM(const Vanetza_ITS2_VAM_t *vam)
+{
+    try
+    {
+        serializeVAM(&asn_DEF_Vanetza_ITS2_VAM, (void *)vam, destinationIP, destinationPort);
+        RCLCPP_INFO(this->get_logger(), "VAM successfully serialized and sent over UDP");
+    }
+    catch (const std::exception &e)
+    {
+        RCLCPP_ERROR(this->get_logger(), "Failed to serialize and send VAM: %s", e.what());
+    }
+}
+
 void UDPdispatcher::publish(const tUDPBTPDataIndMsg *ind)
 {
     //v2x_stack::msg::CohdaInd ccu_ind;
@@ -112,6 +165,22 @@ void UDPdispatcher::publish(const tUDPBTPDataIndMsg *ind)
     std::copy(ind->Payload, ind->Payload + btpMsgSize, ccu_ind->payload.begin());
 
     
+
+    publisher_->publish(*ccu_ind);
+}
+
+void UDPdispatcher::publish(const tUDPBTPDataIndMsg *ind) {
+    auto ccu_ind = boost::make_shared<v2x_stack_btp::msg::CohdaInd>();
+
+    // ... bestehende Verarbeitung ...
+
+    // Serialisierung der Nachricht
+    std::vector<uint8_t> serializedData;
+    serializeVAM(&asn_DEF_CohdaInd, ccu_ind.get(), serializedData);
+
+    if (!serializedData.empty()) {
+        RCLCPP_INFO(this->get_logger(), "Serialized VAM size: %zu bytes", serializedData.size());
+    }
 
     publisher_->publish(*ccu_ind);
 }
