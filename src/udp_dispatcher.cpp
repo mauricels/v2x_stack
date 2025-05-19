@@ -57,6 +57,29 @@ void UDPdispatcher::initialize()
         return;
     }
 
+
+    // Socket für destination_port erstellen (ähnlich wie Socket für "originating_port"; Zeile: 43 - 58)
+    int sockfd_dest = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd_dest < 0) {
+        RCLCPP_FATAL(rclcpp::get_logger("rclcpp"), "Error creating destination UDP socket");
+        return;
+    }
+    
+    struct sockaddr_in dest_addr;
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(destinationPort); // destination_port
+    dest_addr.sin_addr.s_addr = inet_addr(destinationIP.c_str());
+
+    // Prüfen, ob bind() notwendig ist, da für ausgehende UDP-Sockets meist keine feste lokale Adresse benötigt wird.
+    /*
+    if (bind(sockfd_dest, (struct sockaddr *)&dest_addr, sizeof(dest_addr)) < 0) {
+        close(sockfd_dest);
+        RCLCPP_FATAL(rclcpp::get_logger("rclcpp"), "Error binding destination socket");
+        return;
+    }
+    */
+
+
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Initialized and starting to receive UDP packets");
 
     char buffer[1024];
