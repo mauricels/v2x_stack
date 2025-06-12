@@ -27,9 +27,6 @@ private:
     void initialize();
     
     struct sockaddr_in host_addr, ccu_addr;
-
-    struct sockaddr_in dest_addr;        // Adresse für destination socket
-
     std::string ccu_ip;
     uint16_t ccu_port;
     uint16_t host_port;
